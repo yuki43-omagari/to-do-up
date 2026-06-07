@@ -95,23 +95,67 @@ li {
 </div>
 
 <script>
+// 画面を開いたときに自動でタスクを読み込む
+window.onload = function() {
+    loadTasks();
+};
+
 function addTask() {
     const input = document.getElementById("taskInput");
     const text = input.value.trim();
 
     if (text === "") return;
 
+    createTaskElement(text);
+    input.value = "";
+    
+    // タスクを追加したら保存する
+    saveTasks();
+}
+
+// 画面にタスクのHTMLを作る関数
+function createTaskElement(text) {
     const li = document.createElement("li");
 
     li.innerHTML = `
         <input type="checkbox">
         <span>${text}</span>
-        <button class="delete-btn" onclick="this.parentElement.remove()">×</button>
+        <button class="delete-btn" onclick="deleteTask(this)">×</button>
     `;
 
     document.getElementById("taskList").appendChild(li);
+}
 
-    input.value = "";
+// タスクを削除する関数
+function deleteTask(button) {
+    button.parentElement.remove();
+    // 削除したあと、最新の状態を保存する
+    saveTasks();
+}
+
+// 現在のタスク一覧をスマホ（ブラウザ）に保存する関数
+function saveTasks() {
+    const taskList = document.getElementById("taskList");
+    const tasks = [];
+    
+    // 画面上のすべてのタスクの文字を集める
+    taskList.querySelectorAll("span").forEach(span => {
+        tasks.push(span.innerText);
+    });
+    
+    // localStorageに保存
+    localStorage.setItem("myTodoList", JSON.stringify(tasks));
+}
+
+// 保存されたタスクを読み込んで画面に表示する関数
+function loadTasks() {
+    const savedTasks = localStorage.getItem("myTodoList");
+    if (savedTasks) {
+        const tasks = JSON.parse(savedTasks);
+        tasks.forEach(text => {
+            createTaskElement(text);
+        });
+    }
 }
 
 document.getElementById("taskInput").addEventListener("keypress", function(event) {
@@ -121,24 +165,15 @@ document.getElementById("taskInput").addEventListener("keypress", function(event
 });
 
 function openSM() {
-    window.open(
-        "https://youtu.be/vc_UVpFayaw?si=CkaaFjlsHDwUHEvO",
-        "_blank"
-    );
+    window.open("https://youtu.be", "_blank");
 }
 
 function openVictory() {
-    window.open(
-        "https://youtube.com/@ama_eru?si=zn_70Z--SUsNm0UN",
-        "_blank"
-    );
+    window.open("https://youtube.com", "_blank");
 }
 
 function openDefeat() {
-    window.open(
-        "https://youtu.be/L4J5pxu48v8?si=yMqXh0ji9kOsQrF1",
-        "_blank"
-    );
+    window.open("https://youtu.be", "_blank");
 }
 </script>
 
