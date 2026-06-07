@@ -1,1 +1,146 @@
-# to-do-up
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ToDo List</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: white;
+    margin: 40px 20px;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+.input-area {
+    margin-bottom: 20px;
+}
+
+input[type="text"] {
+    padding: 10px;
+    width: 220px;
+    font-size: 16px;
+}
+
+#addBtn {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 10px 0;
+    font-size: 18px;
+}
+
+.delete-btn {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+.bottom-buttons {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.action-btn {
+    width: 120px;
+    height: 80px;
+    font-size: 20px;
+    border: 2px solid black;
+    background: white;
+    cursor: pointer;
+}
+
+.action-btn:hover {
+    background: #f0f0f0;
+}
+</style>
+</head>
+
+<body>
+
+<h1>ToDo List</h1>
+
+<div class="input-area">
+    <input type="text" id="taskInput" placeholder="タスクを入力">
+    <button id="addBtn" onclick="addTask()">Add</button>
+</div>
+
+<ul id="taskList"></ul>
+
+<div class="bottom-buttons">
+    <button class="action-btn" onclick="openSM()">SM</button>
+    <button class="action-btn" onclick="openVictory()">Victory</button>
+    <button class="action-btn" onclick="openDefeat()">Defeat</button>
+</div>
+
+<script>
+function addTask() {
+    const input = document.getElementById("taskInput");
+    const text = input.value.trim();
+
+    if (text === "") return;
+
+    const li = document.createElement("li");
+
+    li.innerHTML = `
+        <input type="checkbox">
+        <span>${text}</span>
+        <button class="delete-btn" onclick="this.parentElement.remove()">×</button>
+    `;
+
+    document.getElementById("taskList").appendChild(li);
+
+    input.value = "";
+}
+
+document.getElementById("taskInput").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        addTask();
+    }
+});
+
+function openSM() {
+    window.open(
+        "https://youtu.be/vc_UVpFayaw?si=CkaaFjlsHDwUHEvO",
+        "_blank"
+    );
+}
+
+function openVictory() {
+    window.open(
+        "https://youtube.com/@ama_eru?si=zn_70Z--SUsNm0UN",
+        "_blank"
+    );
+}
+
+function openDefeat() {
+    window.open(
+        "https://youtu.be/L4J5pxu48v8?si=yMqXh0ji9kOsQrF1",
+        "_blank"
+    );
+}
+</script>
+
+</body>
+</html>
