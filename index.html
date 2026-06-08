@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ToDo List</title>
-<link rel="manifest" href="manifest.json?v=4">
-
 
 <style>
 body {
@@ -76,6 +74,27 @@ li {
 .action-btn:hover {
     background: #f0f0f0;
 }
+
+.timer-area {
+    margin-top: 60px;
+}
+
+#timeSelect {
+    padding: 8px;
+    font-size: 18px;
+}
+
+#timer {
+    font-size: 50px;
+    margin: 20px 0;
+}
+
+.timer-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    margin: 0 5px;
+    cursor: pointer;
+}
 </style>
 </head>
 
@@ -96,10 +115,29 @@ li {
     <button class="action-btn" onclick="openDefeat()">Defeat</button>
 </div>
 
+<div class="timer-area">
+
+    <select id="timeSelect" onchange="changeTime()">
+        <option value="1500">25分</option>
+        <option value="900">15分</option>
+        <option value="300">5分</option>
+    </select>
+
+    <h2 id="timer">25:00</h2>
+
+    <button class="timer-btn" onclick="startTimer()">スタート</button>
+    <button class="timer-btn" onclick="stopTimer()">停止</button>
+    <button class="timer-btn" onclick="resetTimer()">リセット</button>
+
+</div>
+
 <script>
-// 画面を開いたときに自動でタスクを読み込む
+
+// ---------- ToDo ----------
+
 window.onload = function() {
     loadTasks();
+    loadTimer();
 };
 
 function addTask() {
@@ -110,12 +148,9 @@ function addTask() {
 
     createTaskElement(text);
     input.value = "";
-    
-    // タスクを追加したら保存する
     saveTasks();
 }
 
-// 画面にタスクのHTMLを作る関数
 function createTaskElement(text) {
     const li = document.createElement("li");
 
@@ -128,43 +163,43 @@ function createTaskElement(text) {
     document.getElementById("taskList").appendChild(li);
 }
 
-// タスクを削除する関数
 function deleteTask(button) {
     button.parentElement.remove();
-    // 削除したあと、最新の状態を保存する
     saveTasks();
 }
 
-// 現在のタスク一覧をスマホ（ブラウザ）に保存する関数
 function saveTasks() {
-    const taskList = document.getElementById("taskList");
     const tasks = [];
-    
-    // 画面上のすべてのタスクの文字を集める
-    taskList.querySelectorAll("span").forEach(span => {
+
+    document.querySelectorAll("#taskList span").forEach(span => {
         tasks.push(span.innerText);
     });
-    
-    // localStorageに保存
-    localStorage.setItem("myTodoList", JSON.stringify(tasks));
+
+    localStorage.setItem(
+        "myTodoList",
+        JSON.stringify(tasks)
+    );
 }
 
-// 保存されたタスクを読み込んで画面に表示する関数
 function loadTasks() {
-    const savedTasks = localStorage.getItem("myTodoList");
+    const savedTasks =
+        localStorage.getItem("myTodoList");
+
     if (savedTasks) {
-        const tasks = JSON.parse(savedTasks);
-        tasks.forEach(text => {
-            createTaskElement(text);
+        JSON.parse(savedTasks).forEach(task => {
+            createTaskElement(task);
         });
     }
 }
 
-document.getElementById("taskInput").addEventListener("keypress", function(event) {
+document.getElementById("taskInput")
+.addEventListener("keypress", function(event) {
     if (event.key === "Enter") {
         addTask();
     }
 });
+
+// ---------- Links ----------
 
 function openSM() {
     window.open("https://youtu.be/vc_UVpFayaw?si=7lncJ8hEqz3mV3TP");
@@ -176,6 +211,106 @@ function openVictory() {
 
 function openDefeat() {
     window.open("https://youtu.be/L4J5pxu48v8?si=AAA1RqVGpoV7ps2O");
+}
+
+// ---------- Timer ----------
+
+let time = 1500;
+let timerInterval = null;
+
+function saveTimer() {
+    localStorage.setItem("timerTime", time);
+    localStorage.setItem(
+        "timerMode",
+        document.getElementById("timeSelect").value
+    );
+}
+
+function loadTimer() {
+
+    const savedTime =
+        localStorage.getItem("timerTime");
+
+    const savedMode =
+        localStorage.getItem("timerMode");
+
+    if (savedMode) {
+        document.getElementById("timeSelect").value =
+            savedMode;
+    }
+
+    if (savedTime !== null) {
+        time = parseInt(savedTime);
+    }
+
+    updateDisplay();
+}
+
+function updateDisplay() {
+
+    const minutes =
+        String(Math.floor(time / 60))
+        .padStart(2, "0");
+
+    const seconds =
+        String(time % 60)
+        .padStart(2, "0");
+
+    document.getElementById("timer").innerText =
+        `${minutes}:${seconds}`;
+}
+
+function changeTime() {
+
+    stopTimer();
+
+    time = parseInt(
+        document.getElementById("timeSelect").value
+    );
+
+    updateDisplay();
+    saveTimer();
+}
+
+function startTimer() {
+
+    if (timerInterval) return;
+
+    timerInterval = setInterval(() => {
+
+        if (time > 0) {
+
+            time--;
+            updateDisplay();
+            saveTimer();
+
+        } else {
+
+            clearInterval(timerInterval);
+            timerInterval = null;
+
+            alert("時間です！");
+        }
+
+    }, 1000);
+}
+
+function stopTimer() {
+
+    clearInterval(timerInterval);
+    timerInterval = null;
+}
+
+function resetTimer() {
+
+    stopTimer();
+
+    time = parseInt(
+        document.getElementById("timeSelect").value
+    );
+
+    updateDisplay();
+    saveTimer();
 }
 
 </script>
